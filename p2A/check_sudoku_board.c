@@ -74,18 +74,21 @@ int valid_sudoku_board(int **board, int size) {
 			// check if the value is within valid range 
 			if(val < 0 || val > size){
 				free(row_check);
+				row_check = NULL;
 				return 0;
 			}
 			// check for duplicates for non-zero values
 			if(val != 0){
 				if(*(row_check + val) == 1){
 					free(row_check);
+					row_check = NULL;
 					return 0;
 				}
 				*(row_check + val) = 1;
 			}
 		}
-		free(row_check);		
+		free(row_check);
+		row_check = NULL;		
 	}
 
 	// checking columns 
@@ -102,15 +105,24 @@ int valid_sudoku_board(int **board, int size) {
 		// iterate through each element in the current col 
 		for(int i = 0; i < size; i++){
 			int val = *(*(board+i)+j);
+
+			if(val < 0 || val > size) {
+				free(col_check);
+				col_check = NULL;
+				return 0;
+			}
+			
 			if(val != 0){	
 				if(*(col_check + val) == 1){
 					free(col_check);
+					col_check = NULL;
 					return 0;
 				}
 				*(col_check + val) = 1;
 			}
 		}
 		free(col_check);
+		col_check = NULL;
 	}
 
 	// if everything passes then it is valid 
@@ -164,7 +176,7 @@ int main( int argc, char **argv ) {
 
 	// Check if number of command-line arguments is correct.
 	if(argc != 2){
-		printf("number of command line arguments is incorrect");
+		printf("Usage: ./check_sudoku_board <input_filename>\n");
 		exit(1);
 	}
 	// Open the file 
@@ -189,11 +201,19 @@ int main( int argc, char **argv ) {
 	// You must dyamically create an array of pointers to other arrays of ints
 	int **board = (int**) malloc(size * sizeof(int * ));	
 	if(board == NULL){
-		printf("Failed to allocate memory.\n");
 		exit(1);
 	}
 	for(int i = 0; i < size; i++){
 		*(board + i) = (int *)malloc(size * sizeof(int));
+		if (*(board + i) == NULL) {
+        		for (int k = 0; k < i; k++) {
+            			free(*(board + k));
+			}
+        	
+        		free(board);
+       	 		fclose(fp);
+        		exit(1);
+		}
 	}
 
 	// Read the remaining lines of the board data file.
@@ -205,7 +225,8 @@ int main( int argc, char **argv ) {
 
 		// read the line
 		if (getline(&line, &len, fp) == -1) {
-			printf("Error while reading line %i of the file.\n", i+2);
+			free(line);
+			printf("Error while reading file.\n", i+2);
 			exit(1);
 		}
 
@@ -219,6 +240,7 @@ int main( int argc, char **argv ) {
 	}
 	
 	free(line);
+	line = NULL;
 
 	// TODO: Call valid_sudoku_board and print the appropriate
 	//       output depending on the function's return value.
@@ -229,11 +251,15 @@ int main( int argc, char **argv ) {
 	}
 
 	// TODO: Free dynamically allocated memory.
+	for(int i = 0; i < size; i++){
+		free(*(board + i));
+		*(board+i) = NULL;
+	}
 	free(board);
+	board=NULL;
 
 	//Close the file.
 	if (fclose(fp) != 0) {
-		printf("Error while closing the file.\n");
 		exit(1);
 	} 
 
