@@ -199,20 +199,20 @@ int main( int argc, char **argv ) {
 
 	// TODO: Dynamically allocate a 2D array for given board size.
 	// You must dyamically create an array of pointers to other arrays of ints
-	int **board = (int**) malloc(size * sizeof(int * ));	
+	int **board = malloc(size * sizeof(int * ));	
 	if(board == NULL){
 		exit(1);
 	}
 	for(int i = 0; i < size; i++){
-		*(board + i) = (int *)malloc(size * sizeof(int));
+		*(board + i) = malloc(size * sizeof(int));
 		if (*(board + i) == NULL) {
-        		for (int k = 0; k < i; k++) {
-            			free(*(board + k));
-			}
-        	
-        		free(board);
-       	 		fclose(fp);
-        		exit(1);
+        	for (int k = 0; k < i; k++) {
+            	free(*(board + k));
+			}   
+			free(board);
+			board = NULL;
+       	 	fclose(fp);
+        	exit(1);
 		}
 	}
 
@@ -226,7 +226,8 @@ int main( int argc, char **argv ) {
 		// read the line
 		if (getline(&line, &len, fp) == -1) {
 			free(line);
-			printf("Error while reading file.\n", i+2);
+			line = NULL;
+			printf("Error while reading file.\n");
 			exit(1);
 		}
 
@@ -246,7 +247,7 @@ int main( int argc, char **argv ) {
 	//       output depending on the function's return value.
 	if(valid_sudoku_board(board, size)){
 		printf("valid\n");
-	}else{
+	} else{
 		printf("invalid\n");
 	}
 
@@ -260,8 +261,9 @@ int main( int argc, char **argv ) {
 
 	//Close the file.
 	if (fclose(fp) != 0) {
+		printf("unable to close file");
 		exit(1);
-	} 
+	}
 
 	return 0;       
 }       // 202509
