@@ -41,9 +41,42 @@ Pointers, Arrays, and Structs
     Stack allocated array structure for 1D, 2D, and more dimensions
     address arithmetic
     syntax for declaring array variable names
+
+    STACK vs HEAP arrays
+        Stack: 
+        - created when function is called and destroyed when function exits 
+        - size must be known at compile time
+        - sizeof() operator: returns total array size in bytes 
+
+        Heap: 
+        - created with malloc(), destroyed with free()
+        - size can be determined at run time 
+        - sizeof operator: returns size of the pointer not size of the array 
+
     accessing elements of 1D and multi-dimensional arrays on STACK and HEAP
     modifying elements of 1D and multi-dimensional arrays on STACK and HEAP
+
+        int stackArray[10];
+        int *heapArray = malloc(10 * sizeof(int));
+
+        // ALL of the following are valid and do the same thing:
+        stackArray[3] = 10;
+        *(stackArray + 3) = 10;
+
+        heapArray[3] = 20;
+        *(heapArray + 3) = 20;
+
     storing and passing along the size of each array
     passing structs to functions (struct copy vs. pointers to structs)
     nesting in structs and arrays of structs
+
+    Order of Operations C
+    () [] ->                (grouping, struct)
+    .                       (member access)
+    ! -- ++ * sizeof()      (unary operators)
+    * / % + -               (arithmetic)
+    < <= > >=               (comparisons)
+    == !=                   (comparisons)
+    || &&                   (logical operators)
+    = += -= *= /=           (assignment)
 
