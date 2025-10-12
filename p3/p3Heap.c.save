@@ -26,6 +26,12 @@
 // AI chats:         Save a transcript and submit with your project.
 //////////////////////////// 80 columns wide ///////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+// Copyright 2020 Jim Skrentny
+// Posting or sharing this file is prohibited, including any changes/additions.
+// Used by permission, CS354 FALL 2025, Hina Mahmood
+////////////////////////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Copyright 2020-2025 Deb Deppeler based on work by Jim Skrentny
@@ -144,77 +150,9 @@ int alloc_size;
  * Tips: Be careful with pointer arithmetic and scale factors.
  */
 void* alloc(int size) {     
-	//TODO: Your code goes in here.
-	if(size <= 0){
-		return NULL;
-	}
-
-	int required_size = sizeof(blockHeader) + size;
-	if (required_size % 8 != 0) {
-        	required_size += (8 - (required_size % 8));
-    	}
-
-	if(required_size < 8){
-		required_size += (8 - (required_size % 8));
-	}
-
-	blockHeader *current = heap_start;
-	blockHeader *best_fit = NULL;
-	int min_size = -1;
-
-	// iterate through to find best fit free block
-	while(current->size_status != 1){
-		int current_block_size = (current->size_status >> 2) << 2;
-		int is_allocated = current -> size_status & 1;
-
-		// found the perfect size
-		if (current_block_size == required_size) {
-                	best_fit = current;
-                	break;
-            	}
-
-		// found a better size than what we have right now
-		if(!is_allocated && current_block_size < min_size){
-			best_fit = current;
-			min_size = current_block_size;
-		}
-		current = (blockHeader *)((char*)current + current_block_size);
-	}
-
-	// no right sized free block was found
-	if(best_fit == NULL){
-		return NULL;
-	}
-
-	int remaining_size = min_size - required_size;
-
-	// allocate that best fit free block
-	if (remaining_size >= 8){
-		int original_p_bit = best_fit -> size_status & 2;
-
-		// Setup the allocated block
-        	best_fit->size_status = required_size | original_p_bit | 1;
-
-        	// Setup the new free block that follows
-        	blockHeader *new_free_block = (blockHeader *)((char *)best_fit + required_size);
-        	// The previous block is now allocated, so p-bit is 1 (value 2)
-        	new_free_block->size_status = remaining_size | 2;
-
-        	// Setup the footer for the new free block
-        	blockHeader *footer = (blockHeader *)((char *)new_free_block + remaining_size - sizeof(blockHeader));
-        	footer->size_status = remaining_size;
-	} 
-	// if it is a perfect fit
-	else{
-		best_fit->size_status = best_fit->size_status | 1;
-		blockHeader *next_block = (blockHeader *)((char *)best_fit + min_size);
-        	if (next_block->size_status != 1) {
-            		next_block->size_status = next_block->size_status | 2;
-        	}
-	}
-
-	return (void *)((char *)best_fit + sizeof(blockHeader));
-}
+    //TODO: Your code goes in here.
+    return NULL;
+} 
 
 /* 
  * Function for freeing up a previously allocated block.
@@ -238,57 +176,7 @@ void* alloc(int size) {
  */                    
 int free_block(void *ptr) {    
     //TODO: Your code goes in here.
-	if(ptr == NULL || (unsigned long int) ptr % 8 != 0){
-		return -1;
-	}
-
-	// Calculate the header address from payload pointer 
-	blockHeader *header = (blockHeader *)((char *)ptr - sizeof(blockHeader));
-	void* heap_end = (void *)heap_start + alloc_size;
-	
-	// Return -1 if ptr block is already freed 
-	if(!(header->size_status & 1)){
-		return -1;
-	}
-
-	// get the block's size and p-bit status 
-	int size = header->size_status & ~3;
-	int is_prev_alloc = header -> size_status & 2;
-
-	// Check the next block to see if its free for coalescing 
-	blockHeader *next_header = (blockHeader *)((char *)header + size);
-    if ((void*)next_header < heap_end && !(next_header->size_status & 1)) {
-        // Next block is free, add its size to the current block's size.
-        size += (next_header->size_status & ~3);
-    }
-
-	// Check the previous block to see if it's free for coalescing.
-    if (!is_prev_alloc) {
-        // Previous block is free. Find its header via its footer.
-        blockHeader *prev_footer = (blockHeader *)((char *)header - sizeof(blockHeader));
-        int prev_size = prev_footer->size_status;
-        
-        // New starting point for the coalesced block is the previous block's header.
-        header = (blockHeader *)((char *)header - prev_size);
-        size += prev_size;
-    }
-
-	// Set the header for the new, possibly coalesced, free block.
-    // Preserve the p-bit of the block where the new free space starts.
-    header->size_status = size | (header->size_status & 2);
-
-    // Set the footer for the new free block.
-    blockHeader *footer = (blockHeader *)((char *)header + size - sizeof(blockHeader));
-    footer->size_status = size;
-
-	// Update the p-bit of the block that now follows our new free block.
-    next_header = (blockHeader *)((char *)header + size);
-    if ((void*)next_header < heap_end) {
-        // The new preceding block is free, so set its p-bit to 0.
-        next_header->size_status &= ~2;
-    }
-
-    return 0;
+    return -1;
 } 
 
 
