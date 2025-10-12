@@ -160,25 +160,29 @@ void* alloc(int size) {
 
 	blockHeader *current = heap_start;
 	blockHeader *best_fit = NULL;
-	int min_size = -1;
+	int best_fit_size = -1;
 
-	// iterate through to find best fit free block
-	while(current->size_status != 1){
-		int current_block_size = (current->size_status >> 2) << 2;
-		int is_allocated = current -> size_status & 1;
+	// Traverse the heap to find the smallest free block that is large enough.
+	while (current->size_status != 1) { // Stop at the end mark.
+    		int current_block_size = current->size_status & ~3; // Mask out status bits to get size.
+    		int is_allocated = current->size_status & 1;
 
-		// found the perfect size
-		if (current_block_size == required_size) {
-                	best_fit = current;
-                	break;
-            	}
-
-		// found a better size than what we have right now
-		if(!is_allocated && current_block_size < min_size){
-			best_fit = current;
-			min_size = current_block_size;
-		}
-		current = (blockHeader *)((char*)current + current_block_size);
+    		// Block must be FREE and LARGE ENOUGH to satisfy the request.
+    		if (!is_allocated && current_block_size >= required_size) {
+        		// Perfect fit found. This is the best we can do, so stop searching.
+       			if (current_block_size == required_size) {
+            			best_fit = current;
+            			best_fit_size = current_block_size;
+            			break;
+        		}
+        		// Not a perfect fit, but potentially a better fit than what we've seen.
+        		if (best_fit == NULL || current_block_size < best_fit_size) {
+            			best_fit = current;
+            			best_fit_size = current_block_size;
+        		}
+    		}
+    		// Move to the next block in the heap.
+    		current = (blockHeader *)((char *)current + current_block_size);
 	}
 
 	// no right sized free block was found
@@ -186,7 +190,7 @@ void* alloc(int size) {
 		return NULL;
 	}
 
-	int remaining_size = min_size - required_size;
+	int remaining_size = best_fit_size - required_size;
 
 	// allocate that best fit free block
 	if (remaining_size >= 8){
@@ -203,11 +207,11 @@ void* alloc(int size) {
         	// Setup the footer for the new free block
         	blockHeader *footer = (blockHeader *)((char *)new_free_block + remaining_size - sizeof(blockHeader));
         	footer->size_status = remaining_size;
-	} 
+	}
 	// if it is a perfect fit
 	else{
 		best_fit->size_status = best_fit->size_status | 1;
-		blockHeader *next_block = (blockHeader *)((char *)best_fit + min_size);
+		blockHeader *next_block = (blockHeader *)((char *)best_fit + best_fit_size);
         	if (next_block->size_status != 1) {
             		next_block->size_status = next_block->size_status | 2;
         	}
