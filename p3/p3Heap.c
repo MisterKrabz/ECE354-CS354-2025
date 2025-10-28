@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Main File:        p3Heap.c
 // This File:        p3Heap.c
-// Other Files:      
+// Other Files:
 // Semester:         CS 354 Lecture 01? Fall 2025
 // Grade Group:      gg06  (Canvas course -> People -> click on your name to see your gg#)
-// Instructor:       
-// 
+// Instructor:       Hina Mahmood
+//
 // Author:           Patrick Wang
 // Email:            pwang384@wisc.edu
 // CS Login:         patrickw
@@ -15,6 +15,10 @@
 //  Keep track of commands, structures, and code that you have learned.
 //  This will help you focus your review on what is new to you from each program.
 //  There is no need to submit work log, unless we ask you to do so.
+//
+//  10/19 Worked on part B + C and completed them 
+//  10/20 Worked on part D and completed it 
+// 
 //////////////////// REQUIRED -- OTHER SOURCES OF HELP ///////////////////////// 
 // Persons:          Identify persons by name, relationship to you, and email.
 //                   Describe in detail the ideas and help they provided.

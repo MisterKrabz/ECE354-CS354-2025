@@ -26,9 +26,9 @@ partB:
 	./test201  #two allocs, two frees, two allocs, 2 frees
 	./test202  #many alloc/free cycles
 	./test211  #8 allocs, 4 frees, more allocs/free cycles
-	./test212_wo_coal  #4 fails if immed coalescing is implemented
+# ./test212_wo_coal  #4 fails if immed coalescing is implemented
 	./test213  #8 allocs, one fail, 3 frees, 1 fits now
-	./test214_wo_coal  #5 fails if immed coalescing implemented
+# ./test214_wo_coal  #5 fails if immed coalescing implemented
 
 # Run the tests that require allocating, freeing, and immediate coalescing  work
 partC:
