@@ -1,0 +1,14 @@
+[patrickw@vm-instunix-02] (41)$ ./csim -s 4 -E 1 -b 4 -t traces/debug
+hits:0 misses:10 evictions:9
+[patrickw@vm-instunix-02] (42)$ ./csim -s 4 -E 1 -b 4 -t traces/trace1
+hits:16 misses:1 evictions:0
+[patrickw@vm-instunix-02] (43)$ ./csim -s 4 -E 1 -b 4 -t traces/trace2
+hits:4 misses:5 evictions:3
+[patrickw@vm-instunix-02] (44)$ ./csim -s 4 -E 1 -b 4 -t traces/trace3
+hits:2 misses:3 evictions:0
+[patrickw@vm-instunix-02] (45)$ ./csim -s 4 -E 1 -b 4 -t traces/trace4
+hits:211 misses:27 evictions:18
+[patrickw@vm-instunix-02] (46)$ ./csim -s 4 -E 1 -b 4 -t traces/trace5
+hits:257595 misses:29369 evictions:29353
+[patrickw@vm-instunix-02] (47)$ 
+
